@@ -10,7 +10,7 @@ const create = async (req, res) => {
         email: data.email,
       },
     });
-
+    console.log(isExists)
     if (isExists) {
       throw new Error("Email already exists");
     }
@@ -18,14 +18,31 @@ const create = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     data.password = await bcrypt.hash(data.password, salt);
 
+    console.log(data)
     const nUser = await User.create(data);
 
+    const token = jwt.sign(
+      {
+        id: nUser.id,
+        email: nUser.email,
+        full_name: nUser.full_name,
+      },
+      "abcefg",
+      {
+        expiresIn: "30d",
+      }
+    );
+    
     return res.status(201).json({
       success: true,
       message: "user sucessfully created",
-      data: nUser,
+      data: {
+        ...nUser.toJSON(),
+        token
+      },
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       success: false,
       message: error.message,
