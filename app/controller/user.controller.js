@@ -87,7 +87,35 @@ const login = async (req, res) => {
   }
 };
 
+const getOne = async (req, res) => {
+  try {
+    console.log(req.user);
+    const fUser = await User.findOne({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    if (!fUser) {
+      throw new Error("User not found");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User",
+      data: fUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   create,
   login,
+  getOne
 };
