@@ -8,7 +8,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    full_name: {
+    email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
@@ -20,12 +20,11 @@ const User = sequelize.define(
   },
   {
     timestamps: true,
+    freezeTableName: true
   }
 );
 
-(async () => {
-  await sequelize.sync({ force: true });
-})();
+User.sync({ alter: true }).then(() => console.log('User table created'));
 
 module.exports = {
   User,
